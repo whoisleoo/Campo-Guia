@@ -26,10 +26,12 @@
 
 <div align="center">
  
-### ▼ Frontend
+### ▼ 
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-38B2A?style=for-the-badge&logo=docker&logoColor=white)
+
 
 
 </div>
@@ -79,10 +81,24 @@ GMAIL_PASSWORD="Senha de aplicativo do seu email"
 
 
 ````
+
+
+
+### ➤ Inicialização via Docker
+```bash
+
+# Clone o repositorio e crie um arquivo .env
+# No arquivo .env, siga as instruções do .env.example e declare as chaves que vai utilizar.
+# Após declarado, utilize:
+docker compose up
+
+````
 # Dependencias (!)
 ## É necessário a instalação dessas duas dependencias para a conversão de PDF para imagem funcionar, saiba mais em <a href="https://www.npmjs.com/package/pdf2pic">pdf2pic</a> <br>
 Dependencia 1: <a href="http://www.graphicsmagick.org/">GraphicsMagick</a> <br>
 Dependencia 2: <a href="https://ghostscript.com/">Ghostscript</a> <br>
+
+## Caso esteja utilizando docker, é necessário a instalação do <a href="https://www.docker.com/get-started/">Docker</a>
 
 
 ---
@@ -91,6 +107,7 @@ Dependencia 2: <a href="https://ghostscript.com/">Ghostscript</a> <br>
 
 <div align="center">
 ➤ <a href="https://github.com/whoisleoo">whoisleoo</a>
+
 
 
 
