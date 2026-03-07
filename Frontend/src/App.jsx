@@ -13,6 +13,7 @@ export default function App() {
   const [curso, setCurso] = useState('')
   const [canal, setCanal] = useState('')
   const [email, setEmail] = useState('')
+  const [numero, setNumero] = useState('')
   const [periodo, setPeriodo] = useState('')
   const [turma, setTurma] = useState('')
   const [imgSrc, setImgSrc] = useState(null)
@@ -44,7 +45,7 @@ export default function App() {
     setLoading(true)
     const periodoPadded = periodo.padStart(2, '0')
     try {
-      const params = new URLSearchParams({ curso, periodo: periodoPadded, turma, email, webhook, canal })
+      const params = new URLSearchParams({ curso, periodo: periodoPadded, turma, email, webhook, canal, numero })
       const res = await fetch(`/api/ensalamento?${params}`)
       if (!res.ok) {
         let body = null
@@ -105,6 +106,7 @@ export default function App() {
             <option value="">Padrão</option>
             <option value="email">Email</option>
             <option value="discord">Discord</option>
+            <option value="whatsapp">Whatsapp</option>
           </select>
         </div>
 
@@ -134,9 +136,22 @@ export default function App() {
           </div>
         )}
 
-        <button type="submit" disabled={loading} className="app-btn">
+          {canal === 'whatsapp' && (
+          <div className="field">
+            <label>Número de telefone <span className="req">*</span></label>
+            <input
+              required
+              type="tel"
+              placeholder="554299000000"
+              value={numero}
+              onChange={e => setNumero(e.target.value)}
+            />
+          </div>
+        )}
+
+        <button type="submit" disabled={loading} className="app-btn" >
           {loading
-            ? <span className="flex items-center justify-center gap-2"><span className="spinner" />Buscando...</span>
+            ? <span className="flex items-center justify-center gap-2" style={{fontFamily: 'medium'}}><span className="spinner" />Buscando...</span>
             : 'Buscar horário'
           }
         </button>
