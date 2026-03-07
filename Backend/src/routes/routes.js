@@ -48,10 +48,25 @@ router.get('/ensalamento', async (req, res) => {
     const tempTxt = path.join(os.tmpdir(), `archive_${Date.now()}.txt`);
     const tempImg = path.join(os.tmpdir(), `archive_${Date.now()}.png`);
     let resultado = null;
+    const WAHA_URL = process.env.WAHA_URL;
+    const WAHA_API_KEY = process.env.WAHA_API_KEY;
+    
+
+   
   
+    const wahaClient = axios.create({
+      baseURL: WAHA_URL,
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Api-Key': WAHA_API_KEY
+      }
+    })
+      
+    
+
 
         try{
-            const { curso, periodo, turma, email, webhook, canal } = req.query;
+            const { curso, periodo, turma, email, webhook, canal, numero} = req.query;
             const prefixo = CURSOS_MAP[curso];
             const moacir = `${prefixo}${periodo}${turma}`;
             const moacir2 = `${prefixo}${periodo}`;
@@ -155,6 +170,10 @@ router.get('/ensalamento', async (req, res) => {
                 return res.status(200).json({ message: `Ensalamento enviado via ${canal}` });
 
               }else if(canal === 'email'){
+                if(!process.env.GMAIL_EMAIL || !process.env.GMAIL_PASSWORD){
+                  return res.status(500).json({error: "A chave GMAIL_EMAIL ou GMAIL_PASSWORD não foram informadas corretamente."})
+                }
+
                 if(email){
                   if (!validarEmail(email)) {
                       return res.status(400).json({ error: "Email tá incorreto" });
@@ -211,6 +230,43 @@ router.get('/ensalamento', async (req, res) => {
                     return res.status(200).json({ message: `Email enviado a ${email}` });
   
               }
+              }else if(canal === 'whatsapp'){
+                if(!process.env.WAHA_API_KEY || !process.env.WAHA_URL){
+                  return res.status(500).json({error: "As chaves WAHA_API_KEY e WAHA_URL não foram informadas corretamente."})
+                }
+                if(!numero){
+                  return res.status(404).json({ message: "Número não informado."})
+                }
+
+
+                try{
+                 const formData = new FormData();
+                 formData.append('image', imgBuffer.toString('base64'));
+
+                 const imgbbResponse = await axios.post(
+                  `https://api.imgbb.com/1/upload?key=${process.env.IMGBB_API_KEY}`,
+                  formData
+                )
+
+                const imagemUrl = imgbbResponse.data.data.url;
+
+                  const wahaResponse = await wahaClient.post('/api/sendText', {
+                      "session": "default",
+                      "chatId": `${numero.replace(/\D/g, '')}@c.us`,
+                      "reply_to": null,
+                      "text": `⭐ Olá! Segue o link para o ensalamento de ${curso} periodo ${periodo} e turma ${turma} : ${imagemUrl}`,
+                      "linkPreview": true,
+                      "linkPreviewHighQuality": false,
+                  })
+
+                  res.status(200).json({
+                    message: "DEU CERTO",
+                    conteudo: wahaResponse.data
+                  })
+                }catch(err){
+                  return res.status(500).json({error: err.message});
+                }
+
               }
 
               

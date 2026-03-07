@@ -1,0 +1,37 @@
+services:
+  waha:
+    image: devlikeapro/waha
+    environment:
+      - WAHA_API_KEY=${WAHA_API_KEY}
+      - WHATSAPP_DEFAULT_ENGINE=${WHATSAPP_DEFAULT_ENGINE}
+      - WAHA_DASHBOARD_USERNAME=${WAHA_DASHBOARD_USERNAME}
+      - WAHA_DASHBOARD_PASSWORD=${WAHA_DASHBOARD_PASSWORD}
+      - WHATSAPP_SWAGGER_USERNAME=${WHATSAPP_SWAGGER_USERNAME}
+      - WHATSAPP_SWAGGER_PASSWORD=${WHATSAPP_SWAGGER_PASSWORD}
+    ports:
+      - "3000:3000"
+    volumes:
+      - waha_data:/app/.sessions
+    restart: unless-stopped
+
+  backend:
+    image: whoisleoo/campoguia-backend
+    env_file: .env
+    environment:
+      - WAHA_URL=http://waha:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - waha
+    restart: unless-stopped
+
+  frontend:
+    image: whoisleoo/campoguia-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  waha_data:
